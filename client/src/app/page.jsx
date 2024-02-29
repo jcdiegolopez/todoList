@@ -6,22 +6,27 @@ import Task from '@/app/ui/Task';
 import SearchBar from '@/app/ui/SearchBar';
 
 export default function Page() {
-  const [tasks, setTasks] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const storedTasks = localStorage.getItem('tasks');
-      return storedTasks ? JSON.parse(storedTasks) : ejemploTasks;
-    } else {
-      return ejemploTasks; 
-    }
-  });
+  const [tasks, setTasks] = useState([]);
   const [filteredTasks, setFilteredTasks] = useState(tasks);
   const [selectedFilter, setSelectedFilter] = useState('All');
 
-  
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+        let stor = JSON.parse(localStorage.getItem('tasks'));
+        if (stor) {
+          console.log(stor)
+            setTasks(stor);
+            applyFilter(stor,selectedFilter);
+        }
+    }
+}, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('tasks', JSON.stringify(tasks)); 
+      if(tasks.length !== 0){
+        localStorage.setItem('tasks', JSON.stringify(tasks)); 
+      }
+      
     }
   }, [tasks]);
 
