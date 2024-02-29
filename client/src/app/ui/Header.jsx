@@ -3,7 +3,7 @@
 export function Header(){
 
     return (
-        <a href="https://github.com/jcdiegolopez/cardGame">
+        
         <div className="justify-between bg-stone-950 flex w-full gap-5 px-20 py-7 items-start max-md:max-w-full max-md:flex-wrap max-md:px-5">
         <div className="justify-center items-center flex gap-0.5 mt-1.5">
           <img
@@ -15,6 +15,7 @@ export function Header(){
             TODO LIST APP
           </div>
         </div>
+        <a href="https://github.com/jcdiegolopez/todoList">
         <div className="items-stretch self-stretch flex justify-between gap-1.5">
           <img
             loading="lazy"
@@ -24,8 +25,10 @@ export function Header(){
           <div className="text-white text-xl font-semibold capitalize grow whitespace-nowrap mt-1.5 self-start">
             Repository
           </div>
+          
         </div>
+        </a>
       </div>
-      </a>
+      
     );
 }
