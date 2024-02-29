@@ -7,6 +7,7 @@ export const ejemploTasks = [
       descripcion: 'Ir al gimnasio o hacer ejercicio en casa',
       fechaEntrega: '2024-02-05',
       estado: 'Todo',
+      edit: false
     },
     {
       id: 2,
@@ -14,6 +15,7 @@ export const ejemploTasks = [
       descripcion: 'Repasar conceptos de React para el proyecto',
       fechaEntrega: '2024-03-10',
       estado: 'In Progress',
+      edit: false
     },
     {
       id: 3,
@@ -21,6 +23,7 @@ export const ejemploTasks = [
       descripcion: 'Desarrollar la interfaz y funcionalidades del proyecto',
       fechaEntrega: '2024-03-15',
       estado: 'Todo',
+      edit: false
     },
     {
       id: 4,
@@ -28,6 +31,7 @@ export const ejemploTasks = [
       descripcion: 'Preparar diapositivas para la reunión del proyecto',
       fechaEntrega: '2024-03-20',
       estado: 'Done',
+      edit: false
     },
     
   ];
