@@ -28,11 +28,11 @@ const Task = ({ task, setDone, changeState, setEditable, setNewInfo }) => {
       <div className="relative overflow-hidden flex flex-col">
         <div className="flex space-x-1 md:space-x-2">
           <div className="flex text-sky-500">
-            <XMarkIcon onClick={() => setDone(task.id)} className="justify-self-end w-4 md:w-5 hover:scale-125 duration-300" />
-            {!task.edit? <PencilIcon onClick={() => setEditable(task.id)} className="justify-self-end w-3 md:w-4 hover:scale-125 duration-300"/>
-             : <CheckIcon onClick={() => setNewInfo(task.id, editedTitle, editedDescription, editedDate)} className=" justify-self-end w-3 md:w-4 hover:scale-125 duration-300" /> }
+            <XMarkIcon onClick={() => setDone(task._id)} className="justify-self-end w-4 md:w-5 hover:scale-125 duration-300" />
+            {!task.edit? <PencilIcon onClick={() => setEditable(task._id)} className="justify-self-end w-3 md:w-4 hover:scale-125 duration-300"/>
+             : <CheckIcon onClick={() => setNewInfo(task._id, editedTitle, editedDescription, editedDate)} className=" justify-self-end w-3 md:w-4 hover:scale-125 duration-300" /> }
             
-            <ArrowPathIcon onClick={() => changeState(task.id)} className="justify-self-end w-3 md:w-4 hover:scale-125 duration-300" />
+            <ArrowPathIcon onClick={() => changeState(task._id)} className="justify-self-end w-3 md:w-4 hover:scale-125 duration-300" />
           </div>
           {task.edit ? (
             <input

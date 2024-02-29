@@ -4,26 +4,28 @@ import { useState, useEffect } from 'react';
 import { ejemploTasks } from '@/app/lib/predata';
 import Task from '@/app/ui/Task';
 import SearchBar from '@/app/ui/SearchBar';
+import axios from "axios";
+
+const API_URL = 'http://localhost:3003';
 
 export default function Page() {
-  const [tasks, setTasks] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const storedTasks = localStorage.getItem('tasks');
-      return storedTasks ? JSON.parse(storedTasks) : ejemploTasks;
-    } else {
-      return ejemploTasks; 
-    }
-  });
-  const [filteredTasks, setFilteredTasks] = useState(tasks);
+  const [tasks, setTasks] = useState([]);
+  const [filteredTasks, setFilteredTasks] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState('All');
 
-  
-
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('tasks', JSON.stringify(tasks)); 
-    }
-  }, [tasks]);
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:3003/tasks');
+        setTasks(response.data);
+        applyFilter(response.data, selectedFilter);
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
+    };
+
+    fetchData();
+  }, [selectedFilter, tasks]);
 
   const handleSearch = (query) => {
     const filtered = tasks.filter((task) =>
@@ -41,54 +43,13 @@ export default function Page() {
     }
   };
 
-  const setDone = (id) => {
-    setTasks((prevTasks) => {
-      const updatedTasks = prevTasks.map((task) =>
-        task.id === id ? { ...task, estado: 'Done' } : task
-      );
-      applyFilter(updatedTasks,selectedFilter);
-      return updatedTasks;
-    });
+  const handleFilterChange = (filter) => {
+    setSelectedFilter(filter);
   };
 
-  const changeStateTask = (id) => {
-    setTasks((prevTasks) => {
-      const updatedTasks = prevTasks.map((task) =>
-        task.id === id
-          ? { ...task, estado: task.estado === 'In Progress' ? 'Todo' : 'In Progress' }
-          : task
-      );
-      applyFilter(updatedTasks,selectedFilter);
-      return updatedTasks;
-    });
-  };
-
-  const setEditable = (id) => {
-    setTasks((prevTasks) => {
-      const updatedTasks = prevTasks.map((task) =>
-        task.id === id ? { ...task, edit: !task.edit } : task
-      );
-      applyFilter(updatedTasks,selectedFilter);
-      return updatedTasks;
-    });
-  };
-
-  const setNewInfo = (id, newTitle, newDescription, newDate) => {
-    setTasks((prevTasks) => {
-      const updatedTasks = prevTasks.map((task) =>
-        task.id === id
-          ? { ...task, titulo: newTitle, descripcion: newDescription, edit: !task.edit, fechaEntrega: newDate }
-          : task
-      );
-      applyFilter(updatedTasks,selectedFilter);
-      return updatedTasks;
-    });
-  };
-
-  const addTask = () => {
+  const addTask = async () => {
     const date = new Date();
     const newTask = {
-      id: tasks.length > 0 ? tasks[tasks.length - 1].id + 1 : 1,
       titulo: '',
       descripcion: '',
       fechaEntrega: date.toISOString().split('T')[0],
@@ -96,17 +57,55 @@ export default function Page() {
       edit: true,
     };
 
-    setTasks((prevTasks) => {
-      const updatedTasks = [...prevTasks, newTask];
-      applyFilter(updatedTasks,selectedFilter);
-      return updatedTasks;
-    });
+    try {
+      const response = await axios.post('http://localhost:3003/tasks', newTask);
+    } catch (error) {
+      console.error('Error adding task:', error);
+    }
   };
 
-  const handleFilterChange = (filter) => {
-    setSelectedFilter(filter);
-    applyFilter(tasks, filter);
+
+  const setDone = async (id) => {
+    try {
+      
+      const response = await axios.put(`http://localhost:3003/tasks/${id}/done`);
+
+    } catch (error) {
+      console.error('Error updating task state:', error);
+    }
   };
+
+  const changeStateTask = async (id) => {
+    try {
+      const response = await axios.put(`http://localhost:3003/tasks/${id}/state`);
+    } catch (error) {
+      console.error('Error updating task state:', error);
+    }
+  };
+
+  const setEditable = async (id) => {
+    try {
+      const response = await axios.put(`http://localhost:3003/tasks/${id}/editable`);
+    } catch (error) {
+      console.error('Error updating task editable state:', error);
+    }
+  };
+
+  const setNewInfo = async (id, newTitle, newDescription, newDate) => {
+    try {
+      const response = await axios.put(`http://localhost:3003/tasks/${id}`, {
+        titulo: newTitle,
+        descripcion: newDescription,
+        fechaEntrega: newDate,
+        edit: false,
+      });
+
+    } catch (error) {
+      console.error('Error updating task info:', error);
+    }
+  };
+  
+  
 
   return (
     <main className="flex min-h-screen justify-center p-10 bg-slate-200 text-black">
@@ -123,7 +122,7 @@ export default function Page() {
             <button className={`${selectedFilter === 'In Progress' && 'font-bold'} hover:text-sky-500 duration-300`} onClick={() => handleFilterChange('In Progress')}>In Progress</button>
             <button className={`${selectedFilter === 'Todo' && 'font-bold'} hover:text-sky-500 duration-300`} onClick={() => handleFilterChange('Todo')}>Todo</button>
           </div>
-          {filteredTasks.map((task) => task.estado !== 'Done' && <Task setDone={setDone} changeState={changeStateTask} setEditable={setEditable} setNewInfo={setNewInfo} key={task.id} task={task} />)}
+          {filteredTasks.map((task) => task.estado !== 'Done' && <Task setDone={setDone} changeState={changeStateTask} setEditable={setEditable} setNewInfo={setNewInfo} key={task._id} task={task} />)}
           <div
             onClick={addTask}
             className="flex justify-center items-center m-0.5 md:m-1 bg-stone-900 p-2 rounded-lg w-full text-base md:text-xl font-semibold outline-[3px] outline-dotted hover:scale-[1.03] duration-300"
